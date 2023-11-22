@@ -1,69 +1,74 @@
-const cards = document.querySelectorAll('.card');
-let hasFlippedCard = false;
-let firstCard, secondCard;
-let lockBoard = false;
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
 
-// função para virar carta
-function flipCard() {
-    if(lockBoard) return;
-    if(this === firstCard) return;
-
-    this.classList.add('flip');
-
-    if(!hasFlippedCard) {
-        hasFlippedCard = true;
-        firstCard = this;
-        return;
-    }
-
-    secondCard = this;
-    hasFlippedCard = false;
-    checkForMatch();
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
 }
 
-// função que checa se as cartas são iguais
-function checkForMatch() {
-    if(firstCard.dataset.card === secondCard.dataset.card) {
-        disableCards();
-        return;
-    }
-
-    unflipCards();
+body {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #282a36;
 }
 
-// função que desabilita as cartas
-function disableCards() {
-    firstCard.removeEventListener('click', flipCard);
-    secondCard.removeEventListener('click', flipCard);
-    resetBoard();
+.memory-game {
+    height: 640px;
+    width: 640px;
+    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+    perspective: 1000px; /* perspectiva do usuário no eixo z, quanto maior, maior o efeito da perspectiva */
 }
 
-// funcão que desvira as cartas
-function unflipCards() {
-    lockBoard = true;
-
-    setTimeout(() => {
-        firstCard.classList.remove('flip');
-        secondCard.classList.remove('flip');
-        resetBoard();
-    }, 1500);
+.card {
+    height: calc( 33.333% - 10px);
+    width: calc(25% - 10px);
+    margin: 5px;
+    position: relative;
+    box-shadow: 1px 1px 1px rgba(0,0,0,.3);
+    cursor: pointer;
+    transform: scale(1);
+    transform-style: preserve-3d; /* adiciona perspectiva 3d, para que o elemento nao fique achatada no plano */
+    transition: transform .9s; /* adiciona efeito de movimento ao flip do card */
 }
 
-// função que reseta o tabuleiro
-function resetBoard() {
-    [hasFlippedCard, lockBoard] = [false, false];
-    [firstCard, secondCard] = [null, null];
+.card:active {
+    transform: scale(0.97);
+    transition: transform .2s;
 }
 
-// função que embaralha as cartas
-(function shuffle() {
-    cards.forEach((card) => {
-        let ramdomPosition = Math.floor(Math.random() * 12);
-        card.style.order = ramdomPosition;
-    })
-})();
+.card-front,
+.card-back {
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  position: absolute;
+  border-radius: 5px;
+  background: rgb(92, 187, 182);
+  backface-visibility: hidden; /* todo elemento tem uma frente e um verso (ao contrário, como um espelho.) essa propriedade retira o verso */
+}
 
-// adiciona evento de clique na carta
-cards.forEach((card) => {
-    card.addEventListener('click', flipCard)
-});
+.card-front {
+    transform: rotateY(180deg); /* antes, o verso aparecia transparente, pois ambas as imagens tem position absolute, ao girar no eixo Y, elas ficaram com os versos virados */
+}
+
+/* flip card animation */
+.card.flip {
+    transform: rotateY(180deg);
+}
+
+footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+	text-align: center;
+    color: #FFF;
+    font-family: 'Roboto';
+}
+
+footer a {
+    text-decoration: none;
+    color: #FFF;
+}
